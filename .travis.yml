@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: node_js
 node_js:
   - 10 # use nodejs v10 LTS
@@ -6,15 +6,17 @@ cache: npm
 branches:
   only:
     - hexo # build master branch only
+before_install:
+    - npm install -g hexo-cli    
+install:
+    - npm install
+    - npm install hexo-deployer-git --save    
 script:
   - hexo clean
   - hexo generate # generate static files
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GH_TOKEN
-  keep-history: true
-  target-branch: master
-  on:
-    branch: hexo
-  local-dir: public
+after_script:
+    - git config user.name "Bryan_Kan"
+    - git config user.email "kantongyi1997@outlook.com"
+    - sed -i "s/gh_token/${GH_TOKEN}/g" ./_config.yml
+    - hexo deploy
+ 
